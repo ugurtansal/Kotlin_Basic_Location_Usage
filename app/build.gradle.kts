@@ -7,6 +7,9 @@ android {
     namespace = "com.ugurtansal.locationusage"
     compileSdk = 35
 
+    buildFeatures{
+        viewBinding = true
+    }
     defaultConfig {
         applicationId = "com.ugurtansal.locationusage"
         minSdk = 26
