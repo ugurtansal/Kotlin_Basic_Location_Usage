@@ -1,28 +1,32 @@
 package com.ugurtansal.locationusage
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
 import com.ugurtansal.locationusage.databinding.ActivityMainBinding
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
-class MainActivity : AppCompatActivity() {
+
+class MainActivity : AppCompatActivity() , OnMapReadyCallback{
     private lateinit var binding: ActivityMainBinding
     private var permissionControl=0;
 
     private lateinit var flpc: FusedLocationProviderClient
     private lateinit var locationTask: Task<Location>
+    private lateinit var mMap: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,9 +50,37 @@ class MainActivity : AppCompatActivity() {
 
 
             }
+            val mapFragment = supportFragmentManager
+                .findFragmentById(R.id.map) as SupportMapFragment
+            mapFragment.getMapAsync(this)
+
+            binding.buttonGoLocation.setOnClickListener {
+                val location = LatLng(41.0361566, 28.9854576)
+                mMap.addMarker(MarkerOptions()
+                    .position(location)
+                    .title("My Location"))
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,17f))
+                mMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
+            }
+
 
         }
+
+
+
     }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+
+        val konum = LatLng(-34.0, 151.0)
+        mMap.addMarker(MarkerOptions()
+            .position(konum)
+            .title("Sydney"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(konum))
+    }
+
+
 
     fun getLocationInfo() { //Get location info
         locationTask.addOnSuccessListener {
@@ -82,3 +114,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
+
+
+
